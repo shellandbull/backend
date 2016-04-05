@@ -19,6 +19,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def serialize(resource:, options: {})
+    JSONAPI::Serializer.serialize(resource, options)
+  end
+
   def current_user
     @current_user ||= authenticate_user!
   end

@@ -1,18 +1,17 @@
 class Api::UsersController < ApplicationController
-  before_action :doorkeeper_authorize!, except: [:create]
-  before_action :authenticate_user!, except: [:create]
-
   def index
+    @users = scope.find(params[:ids])
+    render json: serialize(resource: @users, options: { is_collection: true })
   end
 
   def show
-  end
-
-  def create
+    @user = scope.find(params[:id])
+    render json: serialize(resource: @user)
   end
 
   private
 
-  def user_params
+  def scope
+    User
   end
 end
