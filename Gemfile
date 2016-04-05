@@ -1,6 +1,5 @@
 source "https://rubygems.org"
 
-
 gem "rails", ">= 5.0.0.beta3", "< 5.1"
 gem "pg", "~> 0.18"
 gem "puma"
@@ -9,6 +8,7 @@ gem "redis", "~> 3.0"
 gem "bcrypt", "~> 3.1.7"
 gem "doorkeeper"
 gem "pry"
+gem "jsonapi-serializers"
 
 group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
@@ -18,6 +18,8 @@ end
 group :test do
   gem "rspec"
   gem "rspec-rails"
+  gem "database_cleaner"
+  gem "factory_girl"
 end
 
 group :development do
