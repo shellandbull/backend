@@ -1,3 +1,5 @@
+require "pry"
+Dir[Dir.pwd + "/lib/**"].each { |f| require(f) if f.match(/.rb/) }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
