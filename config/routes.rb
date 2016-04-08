@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   namespace :api do
     use_doorkeeper
-
     resources :users, only: [:index, :show, :create]
   end
 
