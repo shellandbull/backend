@@ -2,9 +2,13 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
+  before_filter :check_request_headers!
 
   rescue_from ActiveRecord::RecordNotFound do
     head :not_found
+  end
+  rescue_from ActionController::BadRequest do
+    render nothing: true, status: 400
   end
 
   def authenticate_user!
@@ -18,6 +22,11 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def check_request_headers!
+    return unless request.headers["Content-Type"] == "application/vnd.api+json"
+    fail ActionController::BadRequest
+  end
 
   def serialize(resource:, options: {})
     JSONAPI::Serializer.serialize(resource, options)
