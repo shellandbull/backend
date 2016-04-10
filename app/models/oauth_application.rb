@@ -1,0 +1,2 @@
+OauthApplication = Doorkeeper::Application
+

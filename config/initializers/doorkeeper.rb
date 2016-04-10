@@ -106,3 +106,9 @@ Doorkeeper.configure do
   # WWW-Authenticate Realm (default "Doorkeeper").
   # realm "Doorkeeper"
 end
+
+Doorkeeper::Application.class_eval do
+  def jsonapi_serializer_class_name
+    "OauthApplicationSerializer"
+  end
+end
