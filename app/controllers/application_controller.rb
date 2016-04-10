@@ -1,9 +1,9 @@
 class ApplicationController < ActionController::Base
+  JSON_API_REQUIRED_REQUEST_HEADER = "application/vnd.api+json"
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
   before_filter :check_request_headers!
-
   rescue_from ActiveRecord::RecordNotFound do
     head :not_found
   end
@@ -16,15 +16,15 @@ class ApplicationController < ActionController::Base
 
     if doorkeeper_token
       Thread.current[:current_user] = User.find(doorkeeper_token.resource_owner_id)
+    else
+      head :forbidden
     end
-
-    head :forbidden
   end
 
   private
 
   def check_request_headers!
-    return unless request.headers["Content-Type"] == "application/vnd.api+json"
+    return if request.headers["Content-Type"] == JSON_API_REQUIRED_REQUEST_HEADER
     fail ActionController::BadRequest
   end
 

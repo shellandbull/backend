@@ -1,6 +1,9 @@
 require "rails_helper"
 
 RSpec.describe Api::UsersController, type: :controller do
+  before do
+    allow(controller).to receive(:check_request_headers!) { nil }
+  end
   describe "GET /api/users" do
     let(:users) { [build(:user), build(:user)] }
     before do
