@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  use_doorkeeper scope: "/api/"
+  use_doorkeeper scope: "/api/oauth"
   root to: "api/users#index"
 
   namespace :api do

@@ -3,12 +3,17 @@ Doorkeeper.configure do
   orm :active_record
 
   # This block will be called to check whether the resource owner is authenticated or not.
-  resource_owner_authenticator do
-    # binding.pry
+  resource_owner_authenticator do |*args|
     fail NotImplementError, "needs to be implemented"
     # Put your resource owner authentication logic here.
     # Example implementation:
     #   User.find_by_id(session[:user_id]) || redirect_to(new_user_session_url)
+  end
+
+  resource_owner_from_credentials do |controller|
+    user = User.find_by(email: controller.params.fetch(:username))
+
+    user.authenticate(controller.params.fetch(:password))
   end
 
   # If you want to restrict access to the web interface for adding oauth authorized applications, you need to declare the block below.
@@ -106,6 +111,9 @@ Doorkeeper.configure do
   # WWW-Authenticate Realm (default "Doorkeeper").
   # realm "Doorkeeper"
 end
+
+# https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Resource-Owner-Password-Credentials-flow
+Doorkeeper.configuration.token_grant_types << "password"
 
 Doorkeeper::Application.class_eval do
   def jsonapi_serializer_class_name

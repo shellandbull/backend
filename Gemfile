@@ -8,7 +8,9 @@ gem "puma"
 gem "oj"
 gem "redis", "~> 3.0"
 gem "bcrypt", "~> 3.1.7"
-gem "doorkeeper"
+
+# https://github.com/doorkeeper-gem/doorkeeper/issues/742
+gem "doorkeeper", "4.0.0.rc2"
 gem "pry"
 gem "jsonapi-serializers"
 
