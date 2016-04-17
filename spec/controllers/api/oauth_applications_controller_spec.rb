@@ -34,7 +34,7 @@ RSpec.describe Api::OauthApplicationsController, type: :controller do
       end
 
       it "returns that users oauth applications" do
-        # expect(r)
+        expect(json_body.fetch(:data)).to be_empty
       end
     end
   end
@@ -74,9 +74,73 @@ RSpec.describe Api::OauthApplicationsController, type: :controller do
 
   describe "POST api/oauth_applications" do
     context "with valid parameters" do
+      let!(:user) { create(:user) }
+      let(:params) do
+        {
+          data: {
+            type: "oauth-applications",
+            attributes: {
+              name: oauth_application_name,
+              "redirect-uri": "https://localhost:4200/"
+            },
+            relationships: {
+              owner: {
+                data: {
+                  type: "users",
+                  id: user.id
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before do
+        post :create, params: params
+      end
+
+      it "201 - Created" do
+        expect(response.status).to eq(201)
+      end
+
+      it "returns the serialized oauth-application" do
+        payload = json_body.fetch(:data)
+        expect(payload.fetch(:attributes).fetch(:name)).to eq(oauth_application_name)
+      end
     end
 
     context "without valid parameters" do
+      let(:invalid_params) do
+        {
+          data: {
+            type: "oauth-applications",
+            attributes: {
+              name: nil
+              },
+            relationships: {
+              owner: {
+                data: {
+                  id: 100
+                }
+              }
+            }
+          }
+        }
+      end
+      before do
+        post :create, params: invalid_params
+      end
+
+      it "422 - Unprocessable entity" do
+        expect(response.status).to eq(422)
+      end
+
+      it "Responds with errors" do
+        errors = json_body.fetch(:errors)
+        expect(errors.fetch(:name)).not_to be_empty
+        expect(errors.fetch(:redirect_uri)).not_to be_empty
+        expect(errors.fetch(:owner)).not_to be_empty
+      end
     end
   end
 end

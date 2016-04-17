@@ -1,15 +1,21 @@
 class ApplicationController < ActionController::Base
   JSON_API_REQUIRED_REQUEST_HEADER = "application/vnd.api+json"
+  BAD_REQUEST = -> do
+    render nothing: true, status: 400
+  end
+  NOT_FOUND = -> do
+    head :not_found
+  end
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
-  before_filter :check_request_headers!
-  rescue_from ActiveRecord::RecordNotFound do
-    head :not_found
-  end
-  rescue_from ActionController::BadRequest do
-    render nothing: true, status: 400
-  end
+  before_action :check_request_headers!
+
+
+  rescue_from ActiveRecord::RecordNotFound, &NOT_FOUND
+  rescue_from ActionController::BadRequest, &BAD_REQUEST
+  rescue_from ActionController::ParameterMissing, &BAD_REQUEST
 
   def authenticate_user!
     return if current_user
