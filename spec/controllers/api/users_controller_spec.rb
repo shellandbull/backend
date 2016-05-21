@@ -93,4 +93,60 @@ RSpec.describe Api::UsersController, type: :controller do
       expect(json_body.fetch(:data).fetch(:attributes).fetch(:email)).to eq(email)
     end
   end
+
+  describe "PUT /api/users/:id" do
+    context "with an authenticated user" do
+      context "who is the same as the target to update" do
+        let(:valid_token) do
+          create(:doorkeeper_token).tap do |token|
+            allow(token).to receive(:acceptable?).and_return(true)
+          end
+        end
+        let(:new_email) { "foobars@barbar.com" }
+        let(:payload) do
+          {
+            data: {
+              attributes: {
+                email: new_email
+              },
+              type: "users"
+            }
+          }
+        end
+
+        before do
+          allow(controller).to receive(:doorkeeper_token) { valid_token }
+          put :update, params: payload.merge(id: valid_token.resource_owner_id)
+        end
+
+        context "with valid parameters" do
+          it "200 - OK" do
+            expect(response.status).to eq(200)
+          end
+
+          it "updates the attributes for the user" do
+            expect(json_body.fetch(:data).fetch(:attributes).fetch(:email)).to eq(new_email)
+          end
+        end
+      end
+
+      context "who is different from the target to update" do
+        let(:target) { create(:user) }
+        let(:valid_token) do
+          create(:doorkeeper_token).tap do |token|
+            allow(token).to receive(:acceptable?).and_return(true)
+          end
+        end
+
+        before do
+          allow(controller).to receive(:doorkeeper_token) { valid_token }
+          put :update, params: { id: target.id }
+        end
+
+        it "403 - Forbidden" do
+          expect(response.status).to eq(403)
+        end
+      end
+    end
+  end
 end
