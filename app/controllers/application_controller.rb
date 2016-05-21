@@ -18,10 +18,12 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::ParameterMissing, &BAD_REQUEST
 
   def authenticate_user!
-    return if current_user
-
+    return @current_user if @current_user.present?
     if doorkeeper_token
-      Thread.current[:current_user] = User.find(doorkeeper_token.resource_owner_id)
+      found_user = User.find(doorkeeper_token.resource_owner_id)
+      Thread.current[:current_user] = found_user
+      @current_user = found_user
+      found_user
     else
       head :forbidden
     end

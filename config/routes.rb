@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   root to: "api/users#index"
 
   namespace :api do
-    resources :users, only: [:index, :show, :create]
+    resources :users, only: [:index, :show, :create, :update]
     resources :oauth_applications, path: "/oauth-applications", only: [:index, :show, :create]
   end
 

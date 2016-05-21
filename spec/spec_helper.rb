@@ -1,4 +1,5 @@
 require "pry"
+require "securerandom"
 require "factory_girl"
 require_relative "./json_helper"
 # load lib folder for tests, even when rails is not loaded
@@ -9,6 +10,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
+
   # mocks
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
