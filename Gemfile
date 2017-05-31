@@ -1,8 +1,8 @@
 source "https://rubygems.org"
 
-ruby "2.2.3"
+ruby "2.3.3"
 
-gem "rails", ">= 5.0.0.beta3", "< 5.1"
+gem "rails", "5.1.1"
 gem "pg", "~> 0.18"
 gem "puma"
 gem "oj"
@@ -10,7 +10,7 @@ gem "redis", "~> 3.0"
 gem "bcrypt", "~> 3.1.7"
 
 # https://github.com/doorkeeper-gem/doorkeeper/issues/742
-gem "doorkeeper", "4.0.0.rc2"
+gem "doorkeeper", "4.2.6"
 gem "jsonapi-serializers"
 
 group :development, :test do
