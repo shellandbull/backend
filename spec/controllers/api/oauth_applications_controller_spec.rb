@@ -57,7 +57,7 @@ RSpec.describe Api::OauthApplicationsController, type: :controller do
       before do
         allow(controller).to receive(:doorkeeper_token) { token }
         allow(controller).to receive(:current_user) { user }
-        allow(controller.send(:scope)).to receive(:find).and_return(oauth_application)
+        allow(OauthApplication).to receive(:find).and_return(oauth_application)
         get :show, params: { id: 1 }
       end
 

@@ -6,7 +6,7 @@ class Api::OauthApplicationsController < ApplicationController
   end
 
   def show
-    @oauth_application = scope.find(params[:id])
+    @oauth_application = OauthApplication.find(params[:id])
     render json: serialize(resource: @oauth_application)
   end
 
