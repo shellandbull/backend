@@ -9,12 +9,10 @@ gem "oj"
 gem "redis", "~> 3.0"
 gem "bcrypt", "~> 3.1.7"
 
-# https://github.com/doorkeeper-gem/doorkeeper/issues/742
 gem "doorkeeper", "4.2.6"
 gem "jsonapi-serializers"
 
 group :development, :test do
-  # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
   gem "pry"
 end
