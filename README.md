@@ -4,7 +4,8 @@
 
 A Rails starter app, [JSON-API](http://jsonapi.org/) compliant + [OAUTH 2](http://oauth.net/2/) based authentication :monkey_face:  Always riding the latest edge :light_rail:
 
-##Caveats
+## Caveats
+
 Due to a Rails bug, in order to correctly serve it for the [client counterpart](https://github.com/mariogintili/ember-oauth-client) Ember app, run the server like so
 
 ```shell
