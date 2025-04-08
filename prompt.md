@@ -1,0 +1,2621 @@
+Project Path: backend
+
+Source Tree:
+
+```txt
+backend
+├── Gemfile
+├── Gemfile.lock
+├── README.md
+├── Rakefile
+├── app
+│   ├── assets
+│   │   ├── config
+│   │   │   └── manifest.js
+│   │   ├── images
+│   │   └── stylesheets
+│   │       └── application.css
+│   ├── channels
+│   │   └── application_cable
+│   │       ├── channel.rb
+│   │       └── connection.rb
+│   ├── controllers
+│   │   ├── api
+│   │   │   ├── oauth_applications_controller.rb
+│   │   │   └── users_controller.rb
+│   │   ├── application_controller.rb
+│   │   └── concerns
+│   ├── helpers
+│   │   └── application_helper.rb
+│   ├── jobs
+│   │   └── application_job.rb
+│   ├── mailers
+│   │   └── application_mailer.rb
+│   ├── models
+│   │   ├── application_record.rb
+│   │   ├── concerns
+│   │   ├── oauth_application.rb
+│   │   └── user.rb
+│   ├── serializers
+│   │   ├── application_serializer.rb
+│   │   ├── oauth_application_serializer.rb
+│   │   └── user_serializer.rb
+│   └── views
+│       └── layouts
+│           ├── application.html.erb
+│           ├── mailer.html.erb
+│           └── mailer.text.erb
+├── bin
+│   ├── bundle
+│   ├── rails
+│   ├── rake
+│   ├── setup
+│   ├── spring
+│   └── update
+├── config
+│   ├── application.rb
+│   ├── boot.rb
+│   ├── cable.yml
+│   ├── database.yml
+│   ├── environment.rb
+│   ├── environments
+│   │   ├── development.rb
+│   │   ├── production.rb
+│   │   └── test.rb
+│   ├── initializers
+│   │   ├── active_record_belongs_to_required_by_default.rb
+│   │   ├── application_controller_renderer.rb
+│   │   ├── backtrace_silencers.rb
+│   │   ├── callback_terminator.rb
+│   │   ├── cookies_serializer.rb
+│   │   ├── doorkeeper.rb
+│   │   ├── filter_parameter_logging.rb
+│   │   ├── inflections.rb
+│   │   ├── mime_types.rb
+│   │   ├── per_form_csrf_tokens.rb
+│   │   ├── request_forgery_protection.rb
+│   │   ├── session_store.rb
+│   │   ├── version.rb
+│   │   └── wrap_parameters.rb
+│   ├── locales
+│   │   ├── doorkeeper.en.yml
+│   │   └── en.yml
+│   ├── puma.rb
+│   ├── routes.rb
+│   └── secrets.yml
+├── config.ru
+├── db
+│   ├── migrate
+│   │   ├── 20160403175438_create_users.rb
+│   │   ├── 20160405123119_create_doorkeeper_tables.rb
+│   │   └── 20160410194053_add_owner_to_oauth_applications.rb
+│   ├── schema.rb
+│   └── seeds.rb
+├── lib
+│   ├── assets
+│   ├── metal.rb
+│   └── tasks
+├── log
+│   └── .keep
+├── public
+│   ├── 404.html
+│   ├── 422.html
+│   ├── 500.html
+│   ├── apple-touch-icon-precomposed.png
+│   ├── apple-touch-icon.png
+│   ├── favicon.ico
+│   └── robots.txt
+├── spec
+│   ├── controllers
+│   │   └── api
+│   │       ├── oauth_applications_controller_spec.rb
+│   │       └── users_controller_spec.rb
+│   ├── factories
+│   │   ├── doorkeeper_token.rb
+│   │   ├── oauth_application.rb
+│   │   └── user.rb
+│   ├── json_helper.rb
+│   ├── models
+│   │   └── user_spec.rb
+│   ├── rails_helper.rb
+│   └── spec_helper.rb
+├── tmp
+│   └── .keep
+└── vendor
+    └── assets
+        └── stylesheets
+
+```
+
+`backend/Gemfile`:
+
+```
+source "https://rubygems.org"
+
+ruby "2.3.3"
+
+gem "rails", "5.1.1"
+gem "pg", "~> 0.18"
+gem "puma"
+gem "oj"
+gem "redis", "~> 3.0"
+gem "bcrypt", "~> 3.1.7"
+
+gem "doorkeeper", "4.2.6"
+gem "jsonapi-serializers"
+
+group :development, :test do
+  gem "byebug"
+  gem "pry"
+end
+
+group :test do
+  gem "rspec"
+  gem "rspec-rails"
+  gem "database_cleaner"
+  gem "factory_girl"
+end
+
+group :development do
+  # Access an IRB console on exception pages or by using <%= console %> in views
+  gem "web-console", "~> 3.0"
+  gem "listen", "~> 3.0.5"
+  gem "spring"
+  gem "spring-watcher-listen", "~> 2.0.0"
+end
+
+gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+```
+
+`backend/Gemfile.lock`:
+
+```lock
+GEM
+  remote: https://rubygems.org/
+  specs:
+    actioncable (5.1.1)
+      actionpack (= 5.1.1)
+      nio4r (~> 2.0)
+      websocket-driver (~> 0.6.1)
+    actionmailer (5.1.1)
+      actionpack (= 5.1.1)
+      actionview (= 5.1.1)
+      activejob (= 5.1.1)
+      mail (~> 2.5, >= 2.5.4)
+      rails-dom-testing (~> 2.0)
+    actionpack (5.1.1)
+      actionview (= 5.1.1)
+      activesupport (= 5.1.1)
+      rack (~> 2.0)
+      rack-test (~> 0.6.3)
+      rails-dom-testing (~> 2.0)
+      rails-html-sanitizer (~> 1.0, >= 1.0.2)
+    actionview (5.1.1)
+      activesupport (= 5.1.1)
+      builder (~> 3.1)
+      erubi (~> 1.4)
+      rails-dom-testing (~> 2.0)
+      rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    activejob (5.1.1)
+      activesupport (= 5.1.1)
+      globalid (>= 0.3.6)
+    activemodel (5.1.1)
+      activesupport (= 5.1.1)
+    activerecord (5.1.1)
+      activemodel (= 5.1.1)
+      activesupport (= 5.1.1)
+      arel (~> 8.0)
+    activesupport (5.1.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (~> 0.7)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+    arel (8.0.0)
+    bcrypt (3.1.11)
+    bindex (0.5.0)
+    builder (3.2.3)
+    byebug (9.0.6)
+    coderay (1.1.1)
+    concurrent-ruby (1.0.5)
+    database_cleaner (1.6.1)
+    diff-lcs (1.3)
+    doorkeeper (4.2.6)
+      railties (>= 4.2)
+    erubi (1.6.0)
+    factory_girl (4.8.0)
+      activesupport (>= 3.0.0)
+    ffi (1.9.18)
+    globalid (0.4.0)
+      activesupport (>= 4.2.0)
+    i18n (0.8.4)
+    jsonapi-serializers (1.0.0)
+      activesupport
+    listen (3.0.8)
+      rb-fsevent (~> 0.9, >= 0.9.4)
+      rb-inotify (~> 0.9, >= 0.9.7)
+    loofah (2.0.3)
+      nokogiri (>= 1.5.9)
+    mail (2.6.5)
+      mime-types (>= 1.16, < 4)
+    method_source (0.8.2)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    mini_portile2 (2.1.0)
+    minitest (5.10.2)
+    nio4r (2.1.0)
+    nokogiri (1.7.2)
+      mini_portile2 (~> 2.1.0)
+    oj (3.0.10)
+    pg (0.20.0)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    puma (3.8.2)
+    rack (2.0.3)
+    rack-test (0.6.3)
+      rack (>= 1.0)
+    rails (5.1.1)
+      actioncable (= 5.1.1)
+      actionmailer (= 5.1.1)
+      actionpack (= 5.1.1)
+      actionview (= 5.1.1)
+      activejob (= 5.1.1)
+      activemodel (= 5.1.1)
+      activerecord (= 5.1.1)
+      activesupport (= 5.1.1)
+      bundler (>= 1.3.0, < 2.0)
+      railties (= 5.1.1)
+      sprockets-rails (>= 2.0.0)
+    rails-dom-testing (2.0.3)
+      activesupport (>= 4.2.0)
+      nokogiri (>= 1.6)
+    rails-html-sanitizer (1.0.3)
+      loofah (~> 2.0)
+    railties (5.1.1)
+      actionpack (= 5.1.1)
+      activesupport (= 5.1.1)
+      method_source
+      rake (>= 0.8.7)
+      thor (>= 0.18.1, < 2.0)
+    rake (12.0.0)
+    rb-fsevent (0.9.8)
+    rb-inotify (0.9.8)
+      ffi (>= 0.5.0)
+    redis (3.3.3)
+    rspec (3.6.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
+    rspec-core (3.6.0)
+      rspec-support (~> 3.6.0)
+    rspec-expectations (3.6.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.6.0)
+    rspec-mocks (3.6.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.6.0)
+    rspec-rails (3.6.0)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
+      rspec-support (~> 3.6.0)
+    rspec-support (3.6.0)
+    slop (3.6.0)
+    spring (2.0.2)
+      activesupport (>= 4.2)
+    spring-watcher-listen (2.0.1)
+      listen (>= 2.7, < 4.0)
+      spring (>= 1.2, < 3.0)
+    sprockets (3.7.1)
+      concurrent-ruby (~> 1.0)
+      rack (> 1, < 3)
+    sprockets-rails (3.2.0)
+      actionpack (>= 4.0)
+      activesupport (>= 4.0)
+      sprockets (>= 3.0.0)
+    thor (0.19.4)
+    thread_safe (0.3.6)
+    tzinfo (1.2.3)
+      thread_safe (~> 0.1)
+    web-console (3.5.1)
+      actionview (>= 5.0)
+      activemodel (>= 5.0)
+      bindex (>= 0.4.0)
+      railties (>= 5.0)
+    websocket-driver (0.6.5)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bcrypt (~> 3.1.7)
+  byebug
+  database_cleaner
+  doorkeeper (= 4.2.6)
+  factory_girl
+  jsonapi-serializers
+  listen (~> 3.0.5)
+  oj
+  pg (~> 0.18)
+  pry
+  puma
+  rails (= 5.1.1)
+  redis (~> 3.0)
+  rspec
+  rspec-rails
+  spring
+  spring-watcher-listen (~> 2.0.0)
+  tzinfo-data
+  web-console (~> 3.0)
+
+RUBY VERSION
+   ruby 2.3.3p222
+
+BUNDLED WITH
+   1.15.0
+
+```
+
+`backend/README.md`:
+
+```md
+![](http://i.imgur.com/ubDi4gW.jpg)
+
+# Backend [![Build Status](https://travis-ci.org/mariogintili/backend.svg?branch=master)](https://travis-ci.org/mariogintili/backend) [![Code Climate](https://codeclimate.com/github/mariogintili/backend/badges/gpa.svg)](https://codeclimate.com/github/mariogintili/backend)
+
+A Rails starter app, [JSON-API](http://jsonapi.org/) compliant + [OAUTH 2](http://oauth.net/2/) based authentication :monkey_face:  Always riding the latest edge :light_rail:
+
+## Caveats
+
+Due to a Rails bug, in order to correctly serve it for the [client counterpart](https://github.com/mariogintili/ember-oauth-client) Ember app, run the server like so
+
+```shell
+$ bin/rails s --binding 127.0.0.1
+```
+
+```
+
+`backend/Rakefile`:
+
+```
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
+
+require File.expand_path('../config/application', __FILE__)
+
+Rails.application.load_tasks
+
+```
+
+`backend/app/assets/config/manifest.js`:
+
+```js
+//= link_tree ../images
+//= link_directory ../stylesheets .css
+
+```
+
+`backend/app/assets/stylesheets/application.css`:
+
+```css
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+```
+
+`backend/app/channels/application_cable/channel.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file. Action Cable runs in a loop that does not support auto reloading.
+module ApplicationCable
+  class Channel < ActionCable::Channel::Base
+  end
+end
+
+```
+
+`backend/app/channels/application_cable/connection.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file. Action Cable runs in a loop that does not support auto reloading.
+module ApplicationCable
+  class Connection < ActionCable::Connection::Base
+  end
+end
+
+```
+
+`backend/app/controllers/api/oauth_applications_controller.rb`:
+
+```rb
+class Api::OauthApplicationsController < ApplicationController
+  before_action :doorkeeper_authorize!, except: [:create]
+  def index
+    @oauth_applications = scope
+    render json: serialize(resource: @oauth_applications, options: { is_collection: true })
+  end
+
+  def show
+    @oauth_application = OauthApplication.find(params[:id])
+    render json: serialize(resource: @oauth_application)
+  end
+
+  def create
+    @oauth_application = OauthApplication.new(oauth_application_params)
+    if @oauth_application.save
+      render json: serialize(resource: @oauth_application), status: :created
+    else
+      render json: { errors: @oauth_application.errors }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def oauth_application_params
+    @oauth_application_params ||= begin
+      data = params.require(:data)
+      hash                 = data.require(:attributes).permit(:name, :"redirect-uri")
+      hash["redirect_uri"] = hash.delete(:"redirect-uri")
+      hash["owner_id"]     = data.require(:relationships).require(:owner).require(:data).require(:id)
+      hash
+    end
+  end
+
+  def scope
+    current_user.oauth_applications
+  end
+end
+
+```
+
+`backend/app/controllers/api/users_controller.rb`:
+
+```rb
+class Api::UsersController < ApplicationController
+  before_action :authenticate_user!, only: [:update]
+
+  def index
+    @users = scope.find(params[:ids])
+    render json: serialize(resource: @users, options: { is_collection: true })
+  end
+
+  def show
+    @user = scope.all.to_a.find do |user|
+      user.id == params[:id]
+    end
+    render json: serialize(resource: @user)
+  end
+
+  def create
+    @user = User.new(user_params)
+    if @user.save
+      render json: serialize(resource: @user), status: :created
+    else
+      render json: { errors: @user.errors }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    @user = User.find(params.require(:id))
+    return head(:forbidden) unless @user.id == current_user.id
+    if @user.update_attributes(user_params)
+      render json: serialize(resource: @user)
+    else
+      render json: { errors: @user.errors }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def user_params
+    params.require(:data).require(:attributes).permit(:email, :password, :password_confirmation)
+  end
+
+  def scope
+    User
+  end
+end
+
+```
+
+`backend/app/controllers/application_controller.rb`:
+
+```rb
+class ApplicationController < ActionController::Base
+  JSON_API_REQUIRED_REQUEST_HEADER = "application/vnd.api+json"
+  BAD_REQUEST = -> do
+    render nothing: true, status: 400
+  end
+  NOT_FOUND = -> do
+    head :not_found
+  end
+
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :null_session
+  before_action :check_request_headers!
+
+
+  rescue_from ActiveRecord::RecordNotFound, &NOT_FOUND
+  rescue_from ActionController::BadRequest, &BAD_REQUEST
+  rescue_from ActionController::ParameterMissing, &BAD_REQUEST
+
+  def authenticate_user!
+    return @current_user if @current_user.present?
+    if doorkeeper_token
+      found_user = User.find(doorkeeper_token.resource_owner_id)
+      Thread.current[:current_user] = found_user
+      @current_user = found_user
+      found_user
+    else
+      head :forbidden
+    end
+  end
+
+  private
+
+  def check_request_headers!
+    return if request.headers["Content-Type"] == JSON_API_REQUIRED_REQUEST_HEADER
+    fail ActionController::BadRequest
+  end
+
+  def serialize(resource:, options: {})
+    JSONAPI::Serializer.serialize(resource, options)
+  end
+
+  def current_user
+    @current_user ||= authenticate_user!
+  end
+end
+
+```
+
+`backend/app/helpers/application_helper.rb`:
+
+```rb
+module ApplicationHelper
+end
+
+```
+
+`backend/app/jobs/application_job.rb`:
+
+```rb
+class ApplicationJob < ActiveJob::Base
+end
+
+```
+
+`backend/app/mailers/application_mailer.rb`:
+
+```rb
+class ApplicationMailer < ActionMailer::Base
+  default from: 'from@example.com'
+  layout 'mailer'
+end
+
+```
+
+`backend/app/models/application_record.rb`:
+
+```rb
+class ApplicationRecord < ActiveRecord::Base
+  self.abstract_class = true
+end
+
+```
+
+`backend/app/models/oauth_application.rb`:
+
+```rb
+OauthApplication = Doorkeeper::Application
+
+class OauthApplication
+  belongs_to :owner, required: true, dependent: :destroy, class_name: "User"
+end
+
+```
+
+`backend/app/models/user.rb`:
+
+```rb
+class User < ApplicationRecord
+  VALID_EMAIL_REGEX = /\A([\w+\-]\.?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+
+  has_secure_password
+  validates_format_of :email, with: VALID_EMAIL_REGEX
+  validates :email, { presence: true, uniqueness: true }
+  validates :password_digest, { presence: true }
+
+  has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
+end
+
+```
+
+`backend/app/serializers/application_serializer.rb`:
+
+```rb
+require "jsonapi-serializers"
+
+class ApplicationSerializer
+  include JSONAPI::Serializer
+end
+
+```
+
+`backend/app/serializers/oauth_application_serializer.rb`:
+
+```rb
+class OauthApplicationSerializer < ApplicationSerializer
+  attributes :name, :redirect_uri, :owner_id
+
+  def type
+    "oauth-applications"
+  end
+end
+
+```
+
+`backend/app/serializers/user_serializer.rb`:
+
+```rb
+class UserSerializer < ApplicationSerializer
+  attributes :id, :email
+end
+
+```
+
+`backend/app/views/layouts/application.html.erb`:
+
+```erb
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Backend</title>
+    <%= csrf_meta_tags %>
+    <%= action_cable_meta_tag %>
+
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
+
+```
+
+`backend/app/views/layouts/mailer.html.erb`:
+
+```erb
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      /* Email styles need to be inline */
+    </style>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
+
+```
+
+`backend/app/views/layouts/mailer.text.erb`:
+
+```erb
+<%= yield %>
+
+```
+
+`backend/bin/bundle`:
+
+```
+#!/usr/bin/env ruby
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+load Gem.bin_path('bundler', 'bundle')
+
+```
+
+`backend/bin/rails`:
+
+```
+#!/usr/bin/env ruby
+begin
+  load File.expand_path('../spring', __FILE__)
+rescue LoadError => e
+  raise unless e.message.include?('spring')
+end
+APP_PATH = File.expand_path('../../config/application', __FILE__)
+require_relative '../config/boot'
+require 'rails/commands'
+
+```
+
+`backend/bin/rake`:
+
+```
+#!/usr/bin/env ruby
+begin
+  load File.expand_path('../spring', __FILE__)
+rescue LoadError => e
+  raise unless e.message.include?('spring')
+end
+require_relative '../config/boot'
+require 'rake'
+Rake.application.run
+
+```
+
+`backend/bin/setup`:
+
+```
+#!/usr/bin/env ruby
+require 'pathname'
+require 'fileutils'
+include FileUtils
+
+# path to your application root.
+APP_ROOT = Pathname.new File.expand_path('../../', __FILE__)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+chdir APP_ROOT do
+  # This script is a starting point to setup your application.
+  # Add necessary setup steps to this file.
+
+  puts '== Installing dependencies =='
+  system! 'gem install bundler --conservative'
+  system('bundle check') or system!('bundle install')
+
+  # puts "\n== Copying sample files =="
+  # unless File.exist?('config/database.yml')
+  #   cp 'config/database.yml.sample', 'config/database.yml'
+  # end
+
+  puts "\n== Preparing database =="
+  system! 'bin/rails db:setup'
+
+  puts "\n== Removing old logs and tempfiles =="
+  system! 'bin/rails log:clear tmp:clear'
+
+  puts "\n== Restarting application server =="
+  system! 'bin/rails restart'
+end
+
+```
+
+`backend/bin/spring`:
+
+```
+#!/usr/bin/env ruby
+
+# This file loads spring without using Bundler, in order to be fast.
+# It gets overwritten when you run the `spring binstub` command.
+
+unless defined?(Spring)
+  require 'rubygems'
+  require 'bundler'
+
+  if (match = Bundler.default_lockfile.read.match(/^GEM$.*?^    (?:  )*spring \((.*?)\)$.*?^$/m))
+    Gem.paths = { 'GEM_PATH' => [Bundler.bundle_path.to_s, *Gem.path].uniq.join(Gem.path_separator) }
+    gem 'spring', match[1]
+    require 'spring/binstub'
+  end
+end
+
+```
+
+`backend/bin/update`:
+
+```
+#!/usr/bin/env ruby
+require 'pathname'
+require 'fileutils'
+include FileUtils
+
+# path to your application root.
+APP_ROOT = Pathname.new File.expand_path('../../', __FILE__)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+chdir APP_ROOT do
+  # This script is a way to update your development environment automatically.
+  # Add necessary update steps to this file.
+
+  puts '== Installing dependencies =='
+  system! 'gem install bundler --conservative'
+  system 'bundle check' or system! 'bundle install'
+
+  puts "\n== Updating database =="
+  system! 'bin/rails db:migrate'
+
+  puts "\n== Removing old logs and tempfiles =="
+  system! 'bin/rails log:clear tmp:clear'
+
+  puts "\n== Restarting application server =="
+  system! 'bin/rails restart'
+end
+
+```
+
+`backend/config.ru`:
+
+```ru
+# This file is used by Rack-based servers to start the application.
+
+require ::File.expand_path('../config/environment', __FILE__)
+
+# Action Cable requires that all classes are loaded in advance
+Rails.application.eager_load!
+
+run Rails.application
+
+```
+
+`backend/config/application.rb`:
+
+```rb
+require File.expand_path('../boot', __FILE__)
+
+require "rails"
+# Pick the frameworks you want:
+require "active_model/railtie"
+require "active_job/railtie"
+require "active_record/railtie"
+require "action_controller/railtie"
+require "action_mailer/railtie"
+require "action_view/railtie"
+require "action_cable/engine"
+# require "sprockets/railtie"
+# require "rails/test_unit/railtie"
+
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
+
+module BackendEmberTraining
+  class Application < Rails::Application
+    config.autoload_paths << Rails.root.join("lib")
+    # Settings in config/environments/* take precedence over those specified here.
+    # Application configuration should go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded.
+  end
+end
+
+```
+
+`backend/config/boot.rb`:
+
+```rb
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+
+require 'bundler/setup' # Set up gems listed in the Gemfile.
+
+```
+
+`backend/config/cable.yml`:
+
+```yml
+# Action Cable uses Redis by default to administer connections, channels, and sending/receiving messages over the WebSocket.
+production:
+  adapter: redis
+  url: redis://localhost:6379/1
+
+development:
+  adapter: async
+
+test:
+  adapter: async
+
+```
+
+`backend/config/database.yml`:
+
+```yml
+# PostgreSQL. Versions 9.1 and up are supported.
+#
+# Install the pg driver:
+#   gem install pg
+# On OS X with Homebrew:
+#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
+# On OS X with MacPorts:
+#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
+# On Windows:
+#   gem install pg
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
+#
+# Configure Using Gemfile
+# gem 'pg'
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: backend_development
+
+  # The specified database role being used to connect to postgres.
+  # To create additional roles in postgres see `$ createuser --help`.
+  # When left blank, postgres will use the default role. This is
+  # the same name as the operating system user that initialized the database.
+  #username: backend
+
+  # The password associated with the postgres role (username).
+  #password:
+
+  # Connect on a TCP socket. Omitted by default since the client uses a
+  # domain socket that doesn't need configuration. Windows does not have
+  # domain sockets, so uncomment these lines.
+  #host: localhost
+
+  # The TCP port the server listens on. Defaults to 5432.
+  # If your server runs on a different port number, change accordingly.
+  #port: 5432
+
+  # Schema search path. The server defaults to $user,public
+  #schema_search_path: myapp,sharedapp,public
+
+  # Minimum log levels, in increasing order:
+  #   debug5, debug4, debug3, debug2, debug1,
+  #   log, notice, warning, error, fatal, and panic
+  # Defaults to warning.
+  #min_messages: notice
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: backend_test
+
+# As with config/secrets.yml, you never want to store sensitive information,
+# like your database password, in your source code. If your source code is
+# ever seen by anyone, they now have access to your database.
+#
+# Instead, provide the password as a unix environment variable when you boot
+# the app. Read http://guides.rubyonrails.org/configuring.html#configuring-a-database
+# for a full rundown on how to provide these environment variables in a
+# production deployment.
+#
+# On Heroku and other platform providers, you may have a full connection URL
+# available as an environment variable. For example:
+#
+#   DATABASE_URL="postgres://myuser:mypass@localhost/somedatabase"
+#
+# You can use this database configuration with:
+#
+#   production:
+#     url: <%= ENV['DATABASE_URL'] %>
+#
+production:
+  <<: *default
+  database: backend_production
+  username: backend
+  password: <%= ENV['backend_DATABASE_PASSWORD'] %>
+
+```
+
+`backend/config/environment.rb`:
+
+```rb
+# Load the Rails application.
+require File.expand_path('../application', __FILE__)
+
+# Initialize the Rails application.
+Rails.application.initialize!
+
+```
+
+`backend/config/environments/development.rb`:
+
+```rb
+Rails.application.configure do
+  # Settings specified here will take precedence over those in config/application.rb.
+
+  # In the development environment your application's code is reloaded on
+  # every request. This slows down response time but is perfect for development
+  # since you don't have to restart the web server when you make code changes.
+  config.cache_classes = false
+
+  # Do not eager load code on boot.
+  config.eager_load = false
+
+  # Show full error reports.
+  config.consider_all_requests_local = true
+
+  # Enable/disable caching. By default caching is disabled.
+  if Rails.root.join('tmp/caching-dev.txt').exist?
+    config.action_controller.perform_caching = true
+
+    config.action_mailer.perform_caching = false
+
+    config.cache_store = :memory_store
+    config.public_file_server.headers = {
+      'Cache-Control' => 'public, max-age=172800'
+    }
+  else
+    config.action_controller.perform_caching = false
+
+    config.action_mailer.perform_caching = false
+
+    config.cache_store = :null_store
+  end
+
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = false
+
+  # Print deprecation notices to the Rails logger.
+  config.active_support.deprecation = :log
+
+  # Raise an error on page load if there are pending migrations.
+  config.active_record.migration_error = :page_load
+
+
+  # Raises error for missing translations
+  # config.action_view.raise_on_missing_translations = true
+
+  # Use an evented file watcher to asynchronously detect changes in source code,
+  # routes, locales, etc. This feature depends on the listen gem.
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+end
+
+```
+
+`backend/config/environments/production.rb`:
+
+```rb
+Rails.application.configure do
+  # Settings specified here will take precedence over those in config/application.rb.
+
+  # Code is not reloaded between requests.
+  config.cache_classes = true
+
+  # Eager load code on boot. This eager loads most of Rails and
+  # your application in memory, allowing both threaded web servers
+  # and those relying on copy on write to perform better.
+  # Rake tasks automatically ignore this option for performance.
+  config.eager_load = true
+
+  # Full error reports are disabled and caching is turned on.
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
+
+  # Disable serving static files from the `/public` folder by default since
+  # Apache or NGINX already handles this.
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+
+
+  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
+  # config.action_controller.asset_host = 'http://assets.example.com'
+
+  # Specifies the header that your server uses for sending files.
+  # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
+
+  # Action Cable endpoint configuration
+  # config.action_cable.url = 'wss://example.com/cable'
+  # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
+
+  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+  # config.force_ssl = true
+
+  # Use the lowest log level to ensure availability of diagnostic information
+  # when problems arise.
+  config.log_level = :debug
+
+  # Prepend all log lines with the following tags.
+  config.log_tags = [ :request_id ]
+
+  # Use a different logger for distributed setups.
+  # require 'syslog/logger'
+  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+  end
+
+  # Use a different cache store in production.
+  # config.cache_store = :mem_cache_store
+
+  # Use a real queuing backend for Active Job (and separate queues per environment)
+  # config.active_job.queue_adapter     = :resque
+  # config.active_job.queue_name_prefix = "backend_#{Rails.env}"
+  config.action_mailer.perform_caching = false
+
+  # Ignore bad email addresses and do not raise email delivery errors.
+  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
+  # config.action_mailer.raise_delivery_errors = false
+
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+  # the I18n.default_locale when a translation cannot be found).
+  config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners.
+  config.active_support.deprecation = :notify
+
+  # Use default logging formatter so that PID and timestamp are not suppressed.
+  config.log_formatter = ::Logger::Formatter.new
+
+  # Do not dump schema after migrations.
+  config.active_record.dump_schema_after_migration = false
+end
+
+```
+
+`backend/config/environments/test.rb`:
+
+```rb
+Rails.application.configure do
+  # Settings specified here will take precedence over those in config/application.rb.
+
+  # The test environment is used exclusively to run your application's
+  # test suite. You never need to work with it otherwise. Remember that
+  # your test database is "scratch space" for the test suite and is wiped
+  # and recreated between test runs. Don't rely on the data there!
+  config.cache_classes = true
+
+  # Do not eager load code on boot. This avoids loading your whole application
+  # just for the purpose of running a single test. If you are using a tool that
+  # preloads Rails for running tests, you may have to set it to true.
+  config.eager_load = false
+
+  # Configure public file server for tests with Cache-Control for performance.
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = {
+    'Cache-Control' => 'public, max-age=3600'
+  }
+
+  # Show full error reports and disable caching.
+  config.consider_all_requests_local       = true
+  config.action_controller.perform_caching = false
+
+  # Raise exceptions instead of rendering exception templates.
+  config.action_dispatch.show_exceptions = false
+
+  # Disable request forgery protection in test environment.
+  config.action_controller.allow_forgery_protection = false
+  config.action_mailer.perform_caching = false
+
+  # Tell Action Mailer not to deliver emails to the real world.
+  # The :test delivery method accumulates sent emails in the
+  # ActionMailer::Base.deliveries array.
+  config.action_mailer.delivery_method = :test
+
+  # Print deprecation notices to the stderr.
+  config.active_support.deprecation = :stderr
+
+  # Raises error for missing translations
+  # config.action_view.raise_on_missing_translations = true
+end
+
+```
+
+`backend/config/initializers/active_record_belongs_to_required_by_default.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Require `belongs_to` associations by default. This is a new Rails 5.0
+# default, so it is introduced as a configuration option to ensure that apps
+# made on earlier versions of Rails are not affected when upgrading.
+Rails.application.config.active_record.belongs_to_required_by_default = true
+
+```
+
+`backend/config/initializers/application_controller_renderer.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# ApplicationController.renderer.defaults.merge!(
+#   http_host: 'example.org',
+#   https: false
+# )
+
+```
+
+`backend/config/initializers/backtrace_silencers.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# You can add backtrace silencers for libraries that you're using but don't wish to see in your backtraces.
+# Rails.backtrace_cleaner.add_silencer { |line| line =~ /my_noisy_library/ }
+
+# You can also remove all the silencers if you're trying to debug a problem that might stem from framework code.
+# Rails.backtrace_cleaner.remove_silencers!
+
+```
+
+`backend/config/initializers/callback_terminator.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Do not halt callback chains when a callback returns false. This is a new
+# Rails 5.0 default, so it is introduced as a configuration option to ensure
+# that apps made with earlier versions of Rails are not affected when upgrading.
+ActiveSupport.halt_callback_chains_on_return_false = false
+
+```
+
+`backend/config/initializers/cookies_serializer.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Specify a serializer for the signed and encrypted cookie jars.
+# Valid options are :json, :marshal, and :hybrid.
+Rails.application.config.action_dispatch.cookies_serializer = :json
+
+```
+
+`backend/config/initializers/doorkeeper.rb`:
+
+```rb
+Doorkeeper.configure do
+  # Change the ORM that doorkeeper will use (needs plugins)
+  orm :active_record
+
+  # This block will be called to check whether the resource owner is authenticated or not.
+  resource_owner_authenticator do |*args|
+    fail NotImplementError, "needs to be implemented"
+    # Put your resource owner authentication logic here.
+    # Example implementation:
+    #   User.find_by_id(session[:user_id]) || redirect_to(new_user_session_url)
+  end
+
+  resource_owner_from_credentials do |controller|
+    user = User.find_by(email: controller.params.fetch(:username))
+
+    user.authenticate(controller.params.fetch(:password))
+  end
+
+  # If you want to restrict access to the web interface for adding oauth authorized applications, you need to declare the block below.
+  # admin_authenticator do
+  #   # Put your admin authentication logic here.
+  #   # Example implementation:
+  #   Admin.find_by_id(session[:admin_id]) || redirect_to(new_admin_session_url)
+  # end
+
+  # Authorization Code expiration time (default 10 minutes).
+  # authorization_code_expires_in 10.minutes
+
+  # Access token expiration time (default 2 hours).
+  # If you want to disable expiration, set this to nil.
+  # access_token_expires_in 2.hours
+
+  # Assign a custom TTL for implicit grants.
+  # custom_access_token_expires_in do |oauth_client|
+  #   oauth_client.application.additional_settings.implicit_oauth_expiration
+  # end
+
+  # Use a custom class for generating the access token.
+  # https://github.com/doorkeeper-gem/doorkeeper#custom-access-token-generator
+  # access_token_generator "::Doorkeeper::JWT"
+
+  # Reuse access token for the same resource owner within an application (disabled by default)
+  # Rationale: https://github.com/doorkeeper-gem/doorkeeper/issues/383
+  # reuse_access_token
+
+  # Issue access tokens with refresh token (disabled by default)
+  use_refresh_token
+
+  # Provide support for an owner to be assigned to each registered application (disabled by default)
+  # Optional parameter :confirmation => true (default false) if you want to enforce ownership of
+  # a registered application
+  # Note: you must also run the rails g doorkeeper:application_owner generator to provide the necessary support
+  # enable_application_owner :confirmation => false
+
+  # Define access token scopes for your provider
+  # For more information go to
+  # https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Scopes
+  # default_scopes  :public
+  # optional_scopes :write, :update
+
+  # Change the way client credentials are retrieved from the request object.
+  # By default it retrieves first from the `HTTP_AUTHORIZATION` header, then
+  # falls back to the `:client_id` and `:client_secret` params from the `params` object.
+  # Check out the wiki for more information on customization
+  # client_credentials :from_basic, :from_params
+
+  # Change the way access token is authenticated from the request object.
+  # By default it retrieves first from the `HTTP_AUTHORIZATION` header, then
+  # falls back to the `:access_token` or `:bearer_token` params from the `params` object.
+  # Check out the wiki for more information on customization
+  # access_token_methods :from_bearer_authorization, :from_access_token_param, :from_bearer_param
+
+  # Change the native redirect uri for client apps
+  # When clients register with the following redirect uri, they won't be redirected to any server and the authorization code will be displayed within the provider
+  # The value can be any string. Use nil to disable this feature. When disabled, clients must provide a valid URL
+  # (Similar behaviour: https://developers.google.com/accounts/docs/OAuth2InstalledApp#choosingredirecturi)
+  #
+  # native_redirect_uri 'urn:ietf:wg:oauth:2.0:oob'
+
+  # Forces the usage of the HTTPS protocol in non-native redirect uris (enabled
+  # by default in non-development environments). OAuth2 delegates security in
+  # communication to the HTTPS protocol so it is wise to keep this enabled.
+  #
+  # force_ssl_in_redirect_uri !Rails.env.development?
+
+  # Specify what grant flows are enabled in array of Strings. The valid
+  # strings and the flows they enable are:
+  #
+  # "authorization_code" => Authorization Code Grant Flow
+  # "implicit"           => Implicit Grant Flow
+  # "password"           => Resource Owner Password Credentials Grant Flow
+  # "client_credentials" => Client Credentials Grant Flow
+  #
+  # If not specified, Doorkeeper enables authorization_code and
+  # client_credentials.
+  #
+  # implicit and password grant flows have risks that you should understand
+  # before enabling:
+  #   http://tools.ietf.org/html/rfc6819#section-4.4.2
+  #   http://tools.ietf.org/html/rfc6819#section-4.4.3
+  #
+  # grant_flows %w(authorization_code client_credentials)
+
+  # Under some circumstances you might want to have applications auto-approved,
+  # so that the user skips the authorization step.
+  # For example if dealing with a trusted application.
+  # skip_authorization do |resource_owner, client|
+  #   client.superapp? or resource_owner.admin?
+  # end
+
+  # WWW-Authenticate Realm (default "Doorkeeper").
+  # realm "Doorkeeper"
+end
+
+# https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Resource-Owner-Password-Credentials-flow
+Doorkeeper.configuration.token_grant_types << "password"
+
+Doorkeeper::Application.class_eval do
+  def jsonapi_serializer_class_name
+    "OauthApplicationSerializer"
+  end
+end
+
+```
+
+`backend/config/initializers/filter_parameter_logging.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Configure sensitive parameters which will be filtered from the log file.
+Rails.application.config.filter_parameters += [:password]
+
+```
+
+`backend/config/initializers/inflections.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Add new inflection rules using the following format. Inflections
+# are locale specific, and you may define rules for as many different
+# locales as you wish. All of these examples are active by default:
+# ActiveSupport::Inflector.inflections(:en) do |inflect|
+#   inflect.plural /^(ox)$/i, '\1en'
+#   inflect.singular /^(ox)en/i, '\1'
+#   inflect.irregular 'person', 'people'
+#   inflect.uncountable %w( fish sheep )
+# end
+
+# These inflection rules are supported but not enabled by default:
+# ActiveSupport::Inflector.inflections(:en) do |inflect|
+#   inflect.acronym 'RESTful'
+# end
+
+```
+
+`backend/config/initializers/mime_types.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+# https://github.com/rails-api/active_model_serializers/issues/1027#issuecomment-126543577
+mime_types = [
+  "application/vnd.api+json",
+  "text/x-json",
+  "application/json"
+]
+
+Mime::Type.unregister :json
+Mime::Type.register "application/json", :json, mime_types
+
+```
+
+`backend/config/initializers/per_form_csrf_tokens.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Enable per-form CSRF tokens.
+Rails.application.config.action_controller.per_form_csrf_tokens = true
+
+```
+
+`backend/config/initializers/request_forgery_protection.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Enable origin-checking CSRF mitigation.
+Rails.application.config.action_controller.forgery_protection_origin_check = true
+
+```
+
+`backend/config/initializers/session_store.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+Rails.application.config.session_store :cookie_store, key: '_backend_session'
+
+```
+
+`backend/config/initializers/version.rb`:
+
+```rb
+Rails::Application::VERSION = "0.1.4"
+
+```
+
+`backend/config/initializers/wrap_parameters.rb`:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# This file contains settings for ActionController::ParamsWrapper which
+# is enabled by default.
+
+# Enable parameter wrapping for JSON. You can disable this by setting :format to an empty array.
+ActiveSupport.on_load(:action_controller) do
+  wrap_parameters format: [:json]
+end
+
+# To enable root element in JSON for ActiveRecord objects.
+# ActiveSupport.on_load(:active_record) do
+#   self.include_root_in_json = true
+# end
+
+```
+
+`backend/config/locales/doorkeeper.en.yml`:
+
+```yml
+en:
+  activerecord:
+    attributes:
+      doorkeeper/application:
+        name: 'Name'
+        redirect_uri: 'Redirect URI'
+    errors:
+      models:
+        doorkeeper/application:
+          attributes:
+            redirect_uri:
+              fragment_present: 'cannot contain a fragment.'
+              invalid_uri: 'must be a valid URI.'
+              relative_uri: 'must be an absolute URI.'
+              secured_uri: 'must be an HTTPS/SSL URI.'
+
+  doorkeeper:
+    applications:
+      confirmations:
+        destroy: 'Are you sure?'
+      buttons:
+        edit: 'Edit'
+        destroy: 'Destroy'
+        submit: 'Submit'
+        cancel: 'Cancel'
+        authorize: 'Authorize'
+      form:
+        error: 'Whoops! Check your form for possible errors'
+      help:
+        redirect_uri: 'Use one line per URI'
+        native_redirect_uri: 'Use %{native_redirect_uri} for local tests'
+        scopes: 'Separate scopes with spaces. Leave blank to use the default scopes.'
+      edit:
+        title: 'Edit application'
+      index:
+        title: 'Your applications'
+        new: 'New Application'
+        name: 'Name'
+        callback_url: 'Callback URL'
+      new:
+        title: 'New Application'
+      show:
+        title: 'Application: %{name}'
+        application_id: 'Application Id'
+        secret: 'Secret'
+        scopes: 'Scopes'
+        callback_urls: 'Callback urls'
+        actions: 'Actions'
+
+    authorizations:
+      buttons:
+        authorize: 'Authorize'
+        deny: 'Deny'
+      error:
+        title: 'An error has occurred'
+      new:
+        title: 'Authorization required'
+        prompt: 'Authorize %{client_name} to use your account?'
+        able_to: 'This application will be able to'
+      show:
+        title: 'Authorization code'
+
+    authorized_applications:
+      confirmations:
+        revoke: 'Are you sure?'
+      buttons:
+        revoke: 'Revoke'
+      index:
+        title: 'Your authorized applications'
+        application: 'Application'
+        created_at: 'Created At'
+        date_format: '%Y-%m-%d %H:%M:%S'
+
+    errors:
+      messages:
+        # Common error messages
+        invalid_request: 'The request is missing a required parameter, includes an unsupported parameter value, or is otherwise malformed.'
+        invalid_redirect_uri: 'The redirect uri included is not valid.'
+        unauthorized_client: 'The client is not authorized to perform this request using this method.'
+        access_denied: 'The resource owner or authorization server denied the request.'
+        invalid_scope: 'The requested scope is invalid, unknown, or malformed.'
+        server_error: 'The authorization server encountered an unexpected condition which prevented it from fulfilling the request.'
+        temporarily_unavailable: 'The authorization server is currently unable to handle the request due to a temporary overloading or maintenance of the server.'
+
+        #configuration error messages
+        credential_flow_not_configured: 'Resource Owner Password Credentials flow failed due to Doorkeeper.configure.resource_owner_from_credentials being unconfigured.'
+        resource_owner_authenticator_not_configured: 'Resource Owner find failed due to Doorkeeper.configure.resource_owner_authenticator being unconfiged.'
+
+        # Access grant errors
+        unsupported_response_type: 'The authorization server does not support this response type.'
+
+        # Access token errors
+        invalid_client: 'Client authentication failed due to unknown client, no client authentication included, or unsupported authentication method.'
+        invalid_grant: 'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.'
+        unsupported_grant_type: 'The authorization grant type is not supported by the authorization server.'
+
+        # Password Access token errors
+        invalid_resource_owner: 'The provided resource owner credentials are not valid, or resource owner cannot be found'
+
+        invalid_token:
+          revoked: "The access token was revoked"
+          expired: "The access token expired"
+          unknown: "The access token is invalid"
+
+    flash:
+      applications:
+        create:
+          notice: 'Application created.'
+        destroy:
+          notice: 'Application deleted.'
+        update:
+          notice: 'Application updated.'
+      authorized_applications:
+        destroy:
+          notice: 'Application revoked.'
+
+    layouts:
+      admin:
+        nav:
+          oauth2_provider: 'OAuth2 Provider'
+          applications: 'Applications'
+      application:
+        title: 'OAuth authorization required'
+
+```
+
+`backend/config/locales/en.yml`:
+
+```yml
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+en:
+  hello: "Hello world"
+
+```
+
+`backend/config/puma.rb`:
+
+```rb
+# Puma can serve each request in a thread from an internal thread pool.
+# The `threads` method setting takes two numbers a minimum and maximum.
+# Any libraries that use thread pools should be configured to match
+# the maximum value specified for Puma. Default is set to 5 threads for minimum
+# and maximum, this matches the default thread size of Active Record.
+#
+threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }.to_i
+threads threads_count, threads_count
+
+# Specifies the `port` that Puma will listen on to receive requests, default is 3000.
+#
+port        ENV.fetch("PORT") { 3000 }
+
+# Specifies the `environment` that Puma will run in.
+#
+environment ENV.fetch("RAILS_ENV") { "development" }
+
+# Specifies the number of `workers` to boot in clustered mode.
+# Workers are forked webserver processes. If using threads and workers together
+# the concurrency of the application would be max `threads` * `workers`.
+# Workers do not work on JRuby or Windows (both of which do not support
+# processes).
+#
+# workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+
+# Use the `preload_app!` method when specifying a `workers` number.
+# This directive tells Puma to first boot the application and load code
+# before forking the application. This takes advantage of Copy On Write
+# process behavior so workers use less memory. If you use this option
+# you need to make sure to reconnect any threads in the `on_worker_boot`
+# block.
+#
+# preload_app!
+
+# The code in the `on_worker_boot` will be called if you are using
+# clustered mode by specifying a number of `workers`. After each worker
+# process is booted this block will be run, if you are using `preload_app!`
+# option you will want to use this block to reconnect to any threads
+# or connections that may have been created at application boot, Ruby
+# cannot share connections between processes.
+#
+# on_worker_boot do
+#   ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+# end
+
+# Allow puma to be restarted by `rails restart` command.
+plugin :tmp_restart
+
+```
+
+`backend/config/routes.rb`:
+
+```rb
+Rails.application.routes.draw do
+  use_doorkeeper scope: "/api/oauth"
+  root to: "api/users#index"
+
+  namespace :api do
+    resources :users, only: [:index, :show, :create, :update]
+    resources :oauth_applications, path: "/oauth-applications", only: [:index, :show, :create]
+  end
+
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # Serve websocket cable requests in-process
+  # mount ActionCable.server => '/cable'
+end
+
+```
+
+`backend/config/secrets.yml`:
+
+```yml
+# Be sure to restart your server when you modify this file.
+
+# Your secret key is used for verifying the integrity of signed cookies.
+# If you change this key, all old signed cookies will become invalid!
+
+# Make sure the secret is at least 30 characters and all random,
+# no regular words or you'll be exposed to dictionary attacks.
+# You can use `rails secret` to generate a secure secret key.
+
+# Make sure the secrets in this file are kept private
+# if you're sharing your code publicly.
+
+development:
+  secret_key_base: a7592c0579655b88d0a0bc93efb90270053b04815743eeb47657a7e023cb7fb25b754c422299184e4c3a1e011dea757ac7a9e35986c2c7720a41807da694aace
+  doorkeeper:
+    name: "oauth_application"
+    redirect_uri: "http://localhost:4200/"
+test:
+  secret_key_base: e8bd7a87364aa33c48ae99669b33c538c1359437a1c45fd67407169ce212428dad777dc70e059e34766f466ffc6d77d32ca9d1b62041dec7a7014bd3375cb8ab
+  name: "oauth_application"
+  redirect_uri: "http://test:4200/"
+# Do not keep production secrets in the repository,
+# instead read values from the environment.
+production:
+  secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+
+```
+
+`backend/db/migrate/20160403175438_create_users.rb`:
+
+```rb
+class CreateUsers < ActiveRecord::Migration[5.0]
+  def change
+    create_table :users do |t|
+      t.string :email
+      t.string :password_digest
+
+      t.timestamps
+    end
+  end
+end
+
+```
+
+`backend/db/migrate/20160405123119_create_doorkeeper_tables.rb`:
+
+```rb
+class CreateDoorkeeperTables < ActiveRecord::Migration
+  def change
+    create_table :oauth_applications do |t|
+      t.string  :name,         null: false
+      t.string  :uid,          null: false
+      t.string  :secret,       null: false
+      t.text    :redirect_uri, null: false
+      t.string  :scopes,       null: false, default: ''
+      t.timestamps
+    end
+
+    add_index :oauth_applications, :uid, unique: true
+
+    create_table :oauth_access_grants do |t|
+      t.integer  :resource_owner_id, null: false
+      t.integer  :application_id,    null: false
+      t.string   :token,             null: false
+      t.integer  :expires_in,        null: false
+      t.text     :redirect_uri,      null: false
+      t.datetime :created_at,        null: false
+      t.datetime :revoked_at
+      t.string   :scopes
+    end
+
+    add_index :oauth_access_grants, :token, unique: true
+
+    create_table :oauth_access_tokens do |t|
+      t.integer  :resource_owner_id
+      t.integer  :application_id
+      t.string   :token,             null: false
+      t.string   :refresh_token
+      t.integer  :expires_in
+      t.datetime :revoked_at
+      t.datetime :created_at,        null: false
+      t.string   :scopes
+    end
+
+    add_index :oauth_access_tokens, :token, unique: true
+    add_index :oauth_access_tokens, :resource_owner_id
+    add_index :oauth_access_tokens, :refresh_token, unique: true
+  end
+end
+
+```
+
+`backend/db/migrate/20160410194053_add_owner_to_oauth_applications.rb`:
+
+```rb
+class AddOwnerToOauthApplications < ActiveRecord::Migration[5.0]
+  def change
+    add_column :oauth_applications, :owner_id, :integer, null: true
+    add_index :oauth_applications, [:owner_id]
+  end
+end
+
+```
+
+`backend/db/schema.rb`:
+
+```rb
+# encoding: UTF-8
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# you'll amass, the slower it'll run and the greater likelihood for issues).
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema.define(version: 20160410194053) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "oauth_access_grants", force: :cascade do |t|
+    t.integer  "resource_owner_id", null: false
+    t.integer  "application_id",    null: false
+    t.string   "token",             null: false
+    t.integer  "expires_in",        null: false
+    t.text     "redirect_uri",      null: false
+    t.datetime "created_at",        null: false
+    t.datetime "revoked_at"
+    t.string   "scopes"
+  end
+
+  add_index "oauth_access_grants", ["token"], name: "index_oauth_access_grants_on_token", unique: true, using: :btree
+
+  create_table "oauth_access_tokens", force: :cascade do |t|
+    t.integer  "resource_owner_id"
+    t.integer  "application_id"
+    t.string   "token",             null: false
+    t.string   "refresh_token"
+    t.integer  "expires_in"
+    t.datetime "revoked_at"
+    t.datetime "created_at",        null: false
+    t.string   "scopes"
+  end
+
+  add_index "oauth_access_tokens", ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true, using: :btree
+  add_index "oauth_access_tokens", ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id", using: :btree
+  add_index "oauth_access_tokens", ["token"], name: "index_oauth_access_tokens_on_token", unique: true, using: :btree
+
+  create_table "oauth_applications", force: :cascade do |t|
+    t.string   "name",                      null: false
+    t.string   "uid",                       null: false
+    t.string   "secret",                    null: false
+    t.text     "redirect_uri",              null: false
+    t.string   "scopes",       default: "", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "owner_id"
+  end
+
+  add_index "oauth_applications", ["owner_id"], name: "index_oauth_applications_on_owner_id", using: :btree
+  add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
+
+  create_table "users", force: :cascade do |t|
+    t.string   "email"
+    t.string   "password_digest"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+end
+
+```
+
+`backend/db/seeds.rb`:
+
+```rb
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
+#
+# Examples:
+#
+#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
+#   Character.create(name: 'Luke', movie: movies.first)
+
+```
+
+`backend/lib/metal.rb`:
+
+```rb
+module Metal
+  autoload :EncryptedPassword, "metal/encrypted_password"
+end
+
+```
+
+`backend/public/404.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The page you were looking for doesn't exist (404)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+  body {
+    background-color: #EFEFEF;
+    color: #2E2F30;
+    text-align: center;
+    font-family: arial, sans-serif;
+    margin: 0;
+  }
+
+  div.dialog {
+    width: 95%;
+    max-width: 33em;
+    margin: 4em auto 0;
+  }
+
+  div.dialog > div {
+    border: 1px solid #CCC;
+    border-right-color: #999;
+    border-left-color: #999;
+    border-bottom-color: #BBB;
+    border-top: #B00100 solid 4px;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    background-color: white;
+    padding: 7px 12% 0;
+    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  }
+
+  h1 {
+    font-size: 100%;
+    color: #730E15;
+    line-height: 1.5em;
+  }
+
+  div.dialog > p {
+    margin: 0 0 1em;
+    padding: 1em;
+    background-color: #F7F7F7;
+    border: 1px solid #CCC;
+    border-right-color: #999;
+    border-left-color: #999;
+    border-bottom-color: #999;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-color: #DADADA;
+    color: #666;
+    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  }
+  </style>
+</head>
+
+<body>
+  <!-- This file lives in public/404.html -->
+  <div class="dialog">
+    <div>
+      <h1>The page you were looking for doesn't exist.</h1>
+      <p>You may have mistyped the address or the page may have moved.</p>
+    </div>
+    <p>If you are the application owner check the logs for more information.</p>
+  </div>
+</body>
+</html>
+
+```
+
+`backend/public/422.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The change you wanted was rejected (422)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+  body {
+    background-color: #EFEFEF;
+    color: #2E2F30;
+    text-align: center;
+    font-family: arial, sans-serif;
+    margin: 0;
+  }
+
+  div.dialog {
+    width: 95%;
+    max-width: 33em;
+    margin: 4em auto 0;
+  }
+
+  div.dialog > div {
+    border: 1px solid #CCC;
+    border-right-color: #999;
+    border-left-color: #999;
+    border-bottom-color: #BBB;
+    border-top: #B00100 solid 4px;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    background-color: white;
+    padding: 7px 12% 0;
+    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  }
+
+  h1 {
+    font-size: 100%;
+    color: #730E15;
+    line-height: 1.5em;
+  }
+
+  div.dialog > p {
+    margin: 0 0 1em;
+    padding: 1em;
+    background-color: #F7F7F7;
+    border: 1px solid #CCC;
+    border-right-color: #999;
+    border-left-color: #999;
+    border-bottom-color: #999;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-color: #DADADA;
+    color: #666;
+    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  }
+  </style>
+</head>
+
+<body>
+  <!-- This file lives in public/422.html -->
+  <div class="dialog">
+    <div>
+      <h1>The change you wanted was rejected.</h1>
+      <p>Maybe you tried to change something you didn't have access to.</p>
+    </div>
+    <p>If you are the application owner check the logs for more information.</p>
+  </div>
+</body>
+</html>
+
+```
+
+`backend/public/500.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>We're sorry, but something went wrong (500)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+  body {
+    background-color: #EFEFEF;
+    color: #2E2F30;
+    text-align: center;
+    font-family: arial, sans-serif;
+    margin: 0;
+  }
+
+  div.dialog {
+    width: 95%;
+    max-width: 33em;
+    margin: 4em auto 0;
+  }
+
+  div.dialog > div {
+    border: 1px solid #CCC;
+    border-right-color: #999;
+    border-left-color: #999;
+    border-bottom-color: #BBB;
+    border-top: #B00100 solid 4px;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    background-color: white;
+    padding: 7px 12% 0;
+    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  }
+
+  h1 {
+    font-size: 100%;
+    color: #730E15;
+    line-height: 1.5em;
+  }
+
+  div.dialog > p {
+    margin: 0 0 1em;
+    padding: 1em;
+    background-color: #F7F7F7;
+    border: 1px solid #CCC;
+    border-right-color: #999;
+    border-left-color: #999;
+    border-bottom-color: #999;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-color: #DADADA;
+    color: #666;
+    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+  }
+  </style>
+</head>
+
+<body>
+  <!-- This file lives in public/500.html -->
+  <div class="dialog">
+    <div>
+      <h1>We're sorry, but something went wrong.</h1>
+    </div>
+    <p>If you are the application owner check the logs for more information.</p>
+  </div>
+</body>
+</html>
+
+```
+
+`backend/public/robots.txt`:
+
+```txt
+# See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+#
+# To ban all spiders from the entire site uncomment the next two lines:
+# User-agent: *
+# Disallow: /
+
+```
+
+`backend/spec/controllers/api/oauth_applications_controller_spec.rb`:
+
+```rb
+require "rails_helper"
+
+RSpec.describe Api::OauthApplicationsController, type: :controller do
+  let(:token) { double(:token, acceptable?: true) }
+  let(:user) { build(:user) }
+  let(:oauth_application_name) { "Chrome Web broswer" }
+  let(:oauth_application) do
+    build(:oauth_application, name: oauth_application_name)
+  end
+  before do
+    allow(controller).to receive(:check_request_headers!) { nil }
+  end
+
+  describe "GET api/oauth_applications" do
+    context "without authentication" do
+      before do
+        get :index
+      end
+
+      it "401 - Unauthorized" do
+        expect(response.status).to eq(401)
+      end
+    end
+
+    context "with authentication" do
+      before do
+        allow(controller).to receive(:doorkeeper_token) { token }
+        allow(controller).to receive(:current_user) { user }
+        get :index
+      end
+
+      it "200 - Ok" do
+        expect(response.status).to eq(200)
+      end
+
+      it "returns that users oauth applications" do
+        expect(json_body.fetch(:data)).to be_empty
+      end
+    end
+  end
+
+  describe "GET api/oauth_applications/:id" do
+    context "without authentication" do
+      before do
+        get :show, params: { id: 1 }
+      end
+
+      it "401 - Unauthorized" do
+        expect(response.status).to eq(401)
+      end
+    end
+
+    context "with authentication" do
+      let(:parsed_oauth_application) do
+        json_body.fetch("data")
+      end
+      before do
+        allow(controller).to receive(:doorkeeper_token) { token }
+        allow(controller).to receive(:current_user) { user }
+        allow(OauthApplication).to receive(:find).and_return(oauth_application)
+        get :show, params: { id: 1 }
+      end
+
+      it "200 - Ok" do
+        expect(response.status).to eq(200)
+      end
+
+      it "returns a serialized oauth application" do
+        expect(parsed_oauth_application["type"]).to eq("oauth-applications")
+        expect(parsed_oauth_application["attributes"]["name"]).to eq(oauth_application_name)
+      end
+    end
+  end
+
+  describe "POST api/oauth_applications" do
+    context "with valid parameters" do
+      let!(:user) { create(:user) }
+      let(:params) do
+        {
+          data: {
+            type: "oauth-applications",
+            attributes: {
+              name: oauth_application_name,
+              "redirect-uri": "https://localhost:4200/"
+            },
+            relationships: {
+              owner: {
+                data: {
+                  type: "users",
+                  id: user.id
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before do
+        post :create, params: params
+      end
+
+      it "201 - Created" do
+        expect(response.status).to eq(201)
+      end
+
+      it "returns the serialized oauth-application" do
+        payload = json_body.fetch(:data)
+        expect(payload.fetch(:attributes).fetch(:name)).to eq(oauth_application_name)
+      end
+    end
+
+    context "without valid parameters" do
+      let(:invalid_params) do
+        {
+          data: {
+            type: "oauth-applications",
+            attributes: {
+              name: nil
+              },
+            relationships: {
+              owner: {
+                data: {
+                  id: 100
+                }
+              }
+            }
+          }
+        }
+      end
+      before do
+        post :create, params: invalid_params
+      end
+
+      it "422 - Unprocessable entity" do
+        expect(response.status).to eq(422)
+      end
+
+      it "Responds with errors" do
+        errors = json_body.fetch(:errors)
+        expect(errors.fetch(:name)).not_to be_empty
+        expect(errors.fetch(:redirect_uri)).not_to be_empty
+        expect(errors.fetch(:owner)).not_to be_empty
+      end
+    end
+  end
+end
+
+```
+
+`backend/spec/controllers/api/users_controller_spec.rb`:
+
+```rb
+require "rails_helper"
+
+RSpec.describe Api::UsersController, type: :controller do
+  before do
+    allow(controller).to receive(:check_request_headers!) { nil }
+  end
+  describe "GET /api/users" do
+    let(:users) { [build(:user), build(:user)] }
+    before do
+      allow(controller.send(:scope)).to receive(:find) { users }
+      get :index, params: { ids: [1,2] }
+    end
+
+    it "200 - OK" do
+      expect(response.status).to eq(200)
+    end
+
+    it "returns a collection of users" do
+      expect(json_body.fetch(:data).length).to eq(users.length)
+    end
+  end
+
+  describe "POST /api/users" do
+    context "with valid parameters" do
+      let(:email) { "foo@bar.com" }
+      let(:password) { "password12345" }
+      let(:payload) do
+        {
+          data: {
+            attributes: {
+              email: email,
+              password: password,
+              password_confirmation: password
+            },
+            type: "users"
+          }
+        }
+      end
+
+      it "201 - Created" do
+        post :create, params: payload
+        expect(response.status).to eq(201)
+      end
+
+      it "creates a user" do
+        expect { post :create, params: payload }.to change { User.count }.from(0).to(1)
+      end
+    end
+
+    context "with invalid parameters" do
+      let(:payload) do
+        {
+          data: {
+            attributes: {
+              email: "foo@?@.com",
+              password: "123",
+              password_confirmation: "123456"
+            },
+            type: "users"
+          }
+        }
+      end
+
+      before do
+        post :create, params: payload
+      end
+
+      it "422 - Unprocessable entity" do
+        expect(response.status).to eq(422)
+      end
+
+      it "returns errors" do
+        expect(json_body.key?(:errors)).to be_truthy
+        expect(json_body[:errors][:password_confirmation]).not_to be_empty
+      end
+    end
+  end
+
+  describe "GET /api/users/:id" do
+    let(:email) { "foo@bar.com" }
+    let(:user) { build(:user, email: email) }
+
+    before do
+      allow(controller.send(:scope)).to receive(:find) { user }
+      get :show, params: { id: 1 }
+    end
+
+    it "200 - OK" do
+      expect(response.status).to eq(200)
+    end
+
+    it "returns a user's attributes in the payload" do
+      expect(json_body.fetch(:data).fetch(:attributes).fetch(:email)).to eq(email)
+    end
+  end
+
+  describe "PUT /api/users/:id" do
+    context "with an authenticated user" do
+      context "who is the same as the target to update" do
+        let(:valid_token) do
+          create(:doorkeeper_token).tap do |token|
+            allow(token).to receive(:acceptable?).and_return(true)
+          end
+        end
+        let(:new_email) { "foobars@barbar.com" }
+        let(:payload) do
+          {
+            data: {
+              attributes: {
+                email: new_email
+              },
+              type: "users"
+            }
+          }
+        end
+
+        before do
+          allow(controller).to receive(:doorkeeper_token) { valid_token }
+          put :update, params: payload.merge(id: valid_token.resource_owner_id)
+        end
+
+        context "with valid parameters" do
+          it "200 - OK" do
+            expect(response.status).to eq(200)
+          end
+
+          it "updates the attributes for the user" do
+            expect(json_body.fetch(:data).fetch(:attributes).fetch(:email)).to eq(new_email)
+          end
+        end
+      end
+
+      context "who is different from the target to update" do
+        let(:target) { create(:user) }
+        let(:valid_token) do
+          create(:doorkeeper_token).tap do |token|
+            allow(token).to receive(:acceptable?).and_return(true)
+          end
+        end
+
+        before do
+          allow(controller).to receive(:doorkeeper_token) { valid_token }
+          put :update, params: { id: target.id }
+        end
+
+        it "403 - Forbidden" do
+          expect(response.status).to eq(403)
+        end
+      end
+    end
+  end
+end
+
+```
+
+`backend/spec/factories/doorkeeper_token.rb`:
+
+```rb
+FactoryGirl.define do
+  factory :doorkeeper_token, class: "Doorkeeper::AccessToken" do
+    resource_owner_id { create(:user).id }
+  end
+end
+
+```
+
+`backend/spec/factories/oauth_application.rb`:
+
+```rb
+FactoryGirl.define do
+  factory :oauth_application, class: "Doorkeeper::Application" do
+  end
+end
+
+```
+
+`backend/spec/factories/user.rb`:
+
+```rb
+FactoryGirl.define do
+  factory :user do
+    email { "user-#{SecureRandom.hex(3)}@foo.com" }
+    password "foobar12345"
+  end
+end
+
+```
+
+`backend/spec/json_helper.rb`:
+
+```rb
+module JSONHelper
+  def json_body
+    JSON.parse(response.body).with_indifferent_access
+  end
+end
+
+```
+
+`backend/spec/models/user_spec.rb`:
+
+```rb
+require "rails_helper"
+
+RSpec.describe User, type: :model do
+  let(:email) { "foo@bar.com" }
+  let(:password) { "mario123456" }
+  subject do
+    described_class.new(email: email,
+                        password: password,
+                        password_confirmation: password)
+  end
+
+  describe "attributes" do
+    it "#email" do
+      expect(subject.email).to eq(email)
+    end
+
+    it "#password" do
+      expect(subject.password).to eq(password)
+    end
+  end
+end
+
+```
+
+`backend/spec/rails_helper.rb`:
+
+```rb
+ENV["RAILS_ENV"] ||= 'test'
+require "spec_helper"
+require File.expand_path("../../config/environment", __FILE__)
+require "rspec/rails"
+require "database_cleaner"
+# Add additional requires below this line. Rails is not loaded until this point!
+
+ActiveRecord::Migration.maintain_test_schema!
+
+RSpec.configure do |config|
+  config.infer_spec_type_from_file_location!
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
+end
+
+```
+
+`backend/spec/spec_helper.rb`:
+
+```rb
+require "pry"
+require "securerandom"
+require "factory_girl"
+require_relative "./json_helper"
+# load lib folder for tests, even when rails is not loaded
+Dir[Dir.pwd + "/lib/**"].each { |f| require(f) if f.match(/.rb/) }
+
+RSpec.configure do |config|
+
+  config.expect_with :rspec do |expectations|
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
+  # mocks
+  config.mock_with :rspec do |mocks|
+    mocks.verify_partial_doubles = true
+  end
+
+  config.include JSONHelper, type: :controller
+
+  # factory girl
+  config.include FactoryGirl::Syntax::Methods
+  config.before(:suite) do
+    FactoryGirl.find_definitions
+  end
+end
+
+```

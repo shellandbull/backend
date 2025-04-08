@@ -7,7 +7,9 @@ class Api::UsersController < ApplicationController
   end
 
   def show
-    @user = scope.find(params[:id])
+    @user = scope.all.to_a.find do |user|
+      user.id == params[:id]
+    end
     render json: serialize(resource: @user)
   end
 
